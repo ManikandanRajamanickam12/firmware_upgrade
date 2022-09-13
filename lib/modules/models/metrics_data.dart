@@ -1,8 +1,6 @@
-enum SensorStatus { running, notRunning }
 
-enum SessionStatus { running, notRunning }
 
-enum PendingStatus { pending, noPending }
+import 'package:firmware/page/constants.dart';
 
 class MetricsData {
   String command;

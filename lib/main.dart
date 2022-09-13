@@ -2,7 +2,7 @@ import 'package:download_assets/download_assets.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firmware/modules/bloc/sensor_bloc.dart';
-import 'package:firmware/page/homepage.dart';
+import 'package:firmware/page/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 

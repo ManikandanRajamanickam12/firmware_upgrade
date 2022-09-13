@@ -1,9 +1,15 @@
 import 'dart:async';
-
 import 'package:firmware/modules/bloc/sensor_bloc.dart';
+import 'package:firmware/page/InternetFailure.dart';
+import 'package:firmware/page/loading.dart';
+import 'package:firmware/page/new_firmware.dart';
+import 'package:firmware/page/sensoe_info.dart';
 import 'package:firmware/page/ble_handler.dart';
 import 'package:firmware/page/dashboard_grid.dart';
 import 'package:firmware/page/firmware_upgrade.dart';
+import 'package:firmware/page/fwupgrade_completed.dart';
+import 'package:firmware/page/upgrade_failure.dart';
+import 'package:firmware/page/upgrading_process.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -40,15 +46,37 @@ class _HomePageState extends State<HomePage> {
                     return DashboardGrid(
                       knownDeviceStream: SensorBloc.instance.knownDeviceStream,
                     );
-                  } else if (state is SensorTestState) {
+                  } else if (state is SensorBLEOffState) {
                     return Center(
-                      child: Text(
-                        "Connected to sensor",
-                        style: TextStyle(color: Colors.red),
-                      ),
+                      child: Text("Turn on the Bluetooth"),
                     );
-                  } else if (state is SensorUpgradeFirmwareState) {
+                  } else if (state is SensorConnectingState) {
+                    return Center(
+                      child: Text("connecting to sensor"),
+                    );
+                  } else if (state is SensorDisconnectState) {
+                    return Center(child: Text("Trying to connect"));
+                  } else if (state is SensorLoadingState) {
+                    return Loading();
+                  } else if (state is SensorInternetConnectionFailureState) {
+                    return InternetFailed();
+                  } else if (state is SensorGetInfoResponseState) {
+                    return SensorInfo();
+                  } else if (state is SensorUpgradeInitiateState) {
                     return FirmwareUpgrade();
+                  } else if (state is SensorUpgradingFirmwareState) {
+                    return UpgradingProcess(
+                        upgradeProcess:
+                            SensorBloc.instance.upgradeProcessStream);
+                  } else if (state is SensorAlreadyUpToDateState) {
+                    String data = state.textResponse;
+                    return FWUpgradeCompleted(
+                      dataResponse: data,
+                    );
+                  } else if (state is SensorUpgradeSuccessState) {
+                    return NewFirmware();
+                  } else if (state is SensorUpgradeFailureState) {
+                    return UpgradeFailure();
                   } else {
                     return Container();
                   }
@@ -66,8 +94,10 @@ class _HomePageState extends State<HomePage> {
           });
           break;
         case BleStatus.poweredOff:
+          Future.delayed(const Duration(seconds: 1), () {
+            SensorBloc.instance.add(const SensorBLEOffEvent());
+          });
 
-          ///create a screen for bluetooth powered off state
           break;
         case BleStatus.unknown:
           break;

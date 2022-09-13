@@ -42,6 +42,7 @@ class DashboardGrid extends StatelessWidget {
                               Text(liveViewData.device.name),
                               ElevatedButton(
                                   onPressed: () {
+                                    print("event passed");
                                     SensorBloc.instance.add(SensorConnectEvent(
                                         device: liveViewData.device));
                                   },

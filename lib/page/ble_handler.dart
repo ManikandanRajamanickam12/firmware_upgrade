@@ -1,3 +1,4 @@
+import 'package:firmware/modules/models/sensor_info_data.dart';
 import 'package:firmware/page/commander.dart';
 import 'package:firmware/page/constants.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -21,12 +22,14 @@ class BleHandler {
   StreamSubscription<ConnectionStateUpdate>? connectionSubscription;
 
   FlutterReactiveBle flutterReactiveBle = FlutterReactiveBle();
+  SensorInfoData? sensorInfoData;
   Commander? commander;
 
   StreamSubscription<BleStatus>? bleStatusListener() {
     bleStatus = flutterReactiveBle.statusStream.listen(null);
     return bleStatus;
   }
+
 
   void connectToDevice(String deviceId) {
     scanSubscription!.cancel();

@@ -39,77 +39,89 @@ class _FirmwareUpgradeState extends State<FirmwareUpgrade> {
     }
   }
 
-  // Download the ZIP file using the HTTP library //
-  Future<File> _downloadzipFile(String url, String fileName) async {
-    var req = await http.Client().get(Uri.parse(url));
-    var file = File('$_dir/$fileName');
-
-    print(file);
-    return file.writeAsBytes(req.bodyBytes);
-  }
-
-  Future downloadFile(Reference ref) async {
-    print(ref);
-    await ref.getDownloadURL().then((value) {
-      setState(() {
-        url = value.toString();
-        path = '$_dir/$_localZipFileName';
-      });
-    });
-    print("$url from firebase");
-    print("$path from local");
-    if (url != "") {
-      Future.delayed(Duration(seconds: 6), () {
-        print("$url for zip");
-        _downloadzipFile(url!, _localZipFileName);
-      });
-      print("getting path");
-
-      Future.delayed(Duration(seconds: 3), () {
-        if (path != null)
-          callEvent();
-        else
-          print("error in the path");
-      });
-    } else {
-      print("url not get from firebase");
-    }
-  }
-
-  void callEvent() {
-    SensorBloc.instance.add(SensorUpgradeFirmwareEvent(path!));
-  }
+  // // Download the ZIP file using the HTTP library //
+  // Future<File> _downloadzipFile(String url, String fileName) async {
+  //   var req = await http.Client().get(Uri.parse(url));
+  //   var file = File('$_dir/$fileName');
+  //   print(file);
+  //   return file.writeAsBytes(req.bodyBytes);
+  // }
+  //
+  // Future downloadFile(Reference ref) async {
+  //   print(ref);
+  //   await ref.getDownloadURL().then((value) {
+  //     setState(() {
+  //       url = value.toString();
+  //       path = '$_dir/$_localZipFileName';
+  //     });
+  //   });
+  //   print("$url from firebase");
+  //   print("$path from local");
+  //   if (url != "") {
+  //     Future.delayed(Duration(seconds: 6), () {
+  //       print("$url for zip");
+  //       _downloadzipFile(url!, _localZipFileName);
+  //     });
+  //     print("getting path");
+  //
+  //     Future.delayed(Duration(seconds: 3), () {
+  //       if (path != null)
+  //         callEvent();
+  //       else
+  //         print("error in the path");
+  //     });
+  //   } else {
+  //     print("url not get from firebase");
+  //   }
+  // }
+  //
+  // void callEvent() {
+  //   SensorBloc.instance.add(SensorUpgradeFirmwareEvent(path!));
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Container(
         height: 200,
-        child: FutureBuilder<ListResult>(
-          future: futureFiles,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final files = snapshot.data!.items;
-              return ListView.builder(
-                  itemCount: files.length,
-                  itemBuilder: (context, index) {
-                    final file = files[0];
-                    return IconButton(
-                      icon: Icon(Icons.download),
-                      onPressed: () {
-                        print("pressed");
-                        downloadFile(file);
-                        print("zip process done");
-                      },
-                    );
-                  });
-            } else if (snapshot.hasError) {
-              return Center(child: Text("Error occured"));
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
+        child: Column(
+          children: [
+            FutureBuilder<ListResult>(
+              future: futureFiles,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final files = snapshot.data!.items;
+                  return Container(
+                    width: 600,
+                    height: 100,
+                    child: ListView.builder(
+                        itemCount: 1,
+                        itemBuilder: (context, index) {
+                          final file = files[0];
+                          final mdFile = files[1];
+
+                          return IconButton(
+                            icon: Icon(Icons.download),
+                            onPressed: () {
+                              print("pressed");
+                              // downloadFile(file);
+                              SensorBloc.instance.add(
+                                  SensorCheckForUpdatesEvent(
+                                      file, mdFile,_dir!));
+                              print("zip process done");
+                            },
+                          );
+                        }),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Error occured"));
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
+          ],
         ));
   }
 }

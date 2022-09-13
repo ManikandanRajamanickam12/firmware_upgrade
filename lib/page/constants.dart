@@ -13,6 +13,13 @@ const int kErrorResponseStringLength = 4;
 const int kBeaconResponseStringLength = 30;
 const int kMaxResponseIntervalSecs = 1;
 
+// enum SessionStatus { running, notRunning }
+enum SensorStatus { running, notRunning }
+
+enum SessionStatus { running, notRunning }
+
+enum PendingStatus { pending, noPending }
+
 enum SensorCommand {
   reset,
   status,

@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.17.6 <3.0.0"
+  sdk: ">=2.17.5 <3.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -45,6 +45,10 @@ dependencies:
   download_assets: ^3.0.0
   path_provider:
   http:
+  shared_preferences: ^2.0.15
+  percent_indicator:
+  loading_animation_widget: ^1.2.0+3
+  connectivity_plus: ^2.3.6+1
 
 
 dev_dependencies:
